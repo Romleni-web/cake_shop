@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<h1 class="mb-4 text-center text-md-start">Checkout</h1>
+<div class="row g-4">
+    <div class="col-md-8 order-2 order-md-1">
+        <div class="card p-3 p-md-4 shadow-sm border-0">
+            <h3 class="mb-3">Your Information</h3>
+            <form action="." method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">Place Order</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-4 order-1 order-md-2">
+        <div class="card p-3 p-md-4 shadow-sm border-0 sticky-md-top" style="top: 100px;">
+            <h3 class="mb-3">Your Order</h3>
+            <ul class="list-group list-group-flush">
+                {% for item in cart %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span>{{ item.quantity }}x {{ item.product.name }}</span>
+                        <span class="fw-bold">KSh {{ item.total_price }}</span>
+                    </li>
+                {% endfor %}
+                <li class="list-group-item d-flex justify-content-between align-items-center fw-bold px-0 pt-3">
+                    <span>Total</span>
+                    <span class="text-danger fs-5">KSh {{ cart.get_total_price }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

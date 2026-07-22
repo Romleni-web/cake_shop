@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if category %}{{ category.name }}{% else %}Cakes{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <!-- Sidebar / Category Filter -->
+    <div class="col-lg-3 col-md-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5 class="card-title mb-3 d-none d-md-block">Categories</h5>
+                <button class="btn btn-outline-primary d-md-none w-100 mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#categoryCollapse">
+                    Filter by Category <i class="bi bi-filter"></i>
+                </button>
+                <div class="collapse d-md-block" id="categoryCollapse">
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'cakes:product_list' %}" class="list-group-item list-group-item-action border-0 rounded {% if not category %}active bg-primary text-white{% endif %}">
+                            All Cakes
+                        </a>
+                        {% for c in categories %}
+                            <a href="{{ c.get_absolute_url }}" class="list-group-item list-group-item-action border-0 rounded mt-1 {% if category.slug == c.slug %}active bg-primary text-white{% endif %}">
+                                {{ c.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="col-lg-9 col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0 fs-3">{% if category %}{{ category.name }}{% else %}Our Collection{% endif %}</h2>
+            <span class="text-muted small">{{ products.count }} item{{ products.count|pluralize }}</span>
+        </div>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4">
+            {% for product in products %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 product-card position-relative">
+                        <div class="overflow-hidden rounded-top">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 250px; object-fit: cover; transition: 0.3s;">
+                            {% else %}
+                                <img src="https://placehold.co/300x250?text=No+Image" class="card-img-top" alt="No image" style="height: 250px; object-fit: cover;">
+                            {% endif %}
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title mb-1 fs-5">{{ product.name }}</h5>
+                            <p class="text-danger fw-bold mb-3">KSh {{ product.price }}</p>
+                            <div class="mt-auto">
+                                <a href="{{ product.get_absolute_url }}" class="btn btn-outline-primary btn-sm w-100 rounded-pill stretched-link">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-search fs-1 text-muted"></i>
+                    <p class="mt-3">No cakes found. Try a different search or category.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-card:hover img {
+        transform: scale(1.05);
+    }
+    .list-group-item.active {
+        font-weight: bold;
+    }
+</style>
+{% endblock %}

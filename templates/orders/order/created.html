@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Thank you{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <i class="bi bi-check-circle text-success display-1 mb-4"></i>
+    <h1 class="display-3">Thank You!</h1>
+    <p class="lead">Your order <strong>#{{ order.id }}</strong> has been placed successfully.</p>
+    <div class="alert alert-info d-inline-block mt-3">
+        <i class="bi bi-phone"></i> Please check your phone for the M-Pesa STK Push to complete payment.
+    </div>
+    <br>
+    <a href="{% url 'cakes:product_list' %}" class="btn btn-primary mt-4">
+        <i class="bi bi-arrow-left"></i> Back to Shop
+    </a>
+</div>
+{% endblock %}

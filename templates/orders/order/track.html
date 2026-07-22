@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Track Your Order{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card p-3 p-md-4 shadow-sm border-0">
+            <h1 class="text-center mb-4 fs-2"><i class="bi bi-truck text-danger"></i> Track Order</h1>
+
+            <form method="get" action=".">
+                <div class="mb-3">
+                    <label for="order_id" class="form-label">Order ID</label>
+                    <input type="text" name="order_id" id="order_id" class="form-control" placeholder="Enter your Order ID" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="Enter the email used for order" required>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Check Status</button>
+                </div>
+            </form>
+
+            {% if order %}
+                <div class="mt-5 border-top pt-4">
+                    <h3 class="fs-4">Order #{{ order.id }} Status</h3>
+                    <div class="alert alert-info mt-3 d-flex align-items-center">
+                        <i class="bi bi-info-circle-fill me-2 fs-4"></i>
+                        <div>
+                            <strong>Status:</strong> {{ order.get_status_display }}<br>
+                            <strong>Payment:</strong> {% if order.paid %}Paid{% else %}Pending{% endif %}
+                        </div>
+                    </div>
+
+                    <h5 class="mt-4">Order Details:</h5>
+                    <div class="list-group list-group-flush mt-2">
+                        {% for item in order.items.all %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <span class="small">{{ item.quantity }}x {{ item.product.name }}</span>
+                                <span class="fw-bold">KSh {{ item.get_cost }}</span>
+                            </div>
+                        {% endfor %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center fw-bold px-0 pt-3 border-top">
+                            <span>Total</span>
+                            <span class="text-danger fs-5">KSh {{ order.get_total_cost }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% elif request.GET.order_id %}
+                <div class="alert alert-warning mt-4 d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
+                    <div>No order found with those details. Please check and try again.</div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
