@@ -61,18 +61,25 @@ WSGI_APPLICATION = 'cake_shop.wsgi.application'
 import dj_database_url
 
 # Database configuration
+# dj_database_url.config() will automatically look for the DATABASE_URL environment variable.
+# If it's not found, it will use the sqlite default provided.
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL', f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=600,
     )
 }
 
-# On Vercel, if DATABASE_URL is missing, we want a clear error or a fallback
-# but since SQLite is impossible on Vercel, Postgres is mandatory there.
-if os.getenv('VERCEL') == '1' and not os.getenv('DATABASE_URL'):
-    # This will help identify if the variable is missing in Vercel logs
-    print("WARNING: DATABASE_URL not found in Vercel environment!")
+# Vercel specific check: SQLite is not supported on Vercel's serverless functions.
+# If we are on Vercel, we MUST have a DATABASE_URL set to a Postgres instance.
+if os.getenv('VERCEL') == '1':
+    if not os.getenv('DATABASE_URL'):
+        # This will show up in Vercel's "Function Logs"
+        print("CRITICAL ERROR: DATABASE_URL environment variable is missing!")
+    else:
+        # Ensure we are not using sqlite on Vercel
+        if DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
+            print("ERROR: DATABASE_URL was provided but dj-database-url failed to parse it as Postgres.")
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
