@@ -30,34 +30,43 @@ class Command(BaseCommand):
             {
                 'category': 'Birthday Cakes',
                 'name': 'Classic Vanilla Birthday',
-                'price': 25.00,
-                'description': 'A fluffy vanilla sponge with buttercream frosting and sprinkles.'
+                'price': 2500.00,
+                'description': 'A fluffy vanilla sponge with buttercream frosting and sprinkles.',
+                'image_url': 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=500'
             },
             {
                 'category': 'Birthday Cakes',
                 'name': 'Rainbow Surprise',
-                'price': 45.00,
-                'description': 'Six layers of vibrant colors with white chocolate ganache.'
+                'price': 4500.00,
+                'description': 'Six layers of vibrant colors with white chocolate ganache.',
+                'image_url': 'https://images.unsplash.com/photo-1535141192574-5d4897c12636?w=500'
             },
             {
                 'category': 'Chocolate Special',
                 'name': 'Double Chocolate Fudge',
-                'price': 30.00,
-                'description': 'Rich dark chocolate cake with chocolate fudge layers.'
+                'price': 3000.00,
+                'description': 'Rich dark chocolate cake with chocolate fudge layers.',
+                'image_url': 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500'
             },
             {
                 'category': 'Cupcakes',
                 'name': 'Red Velvet Cupcake',
-                'price': 3.50,
-                'description': 'Individual red velvet cakes with cream cheese frosting.'
+                'price': 350.00,
+                'description': 'Individual red velvet cakes with cream cheese frosting.',
+                'image_url': 'https://images.unsplash.com/photo-1614707267537-b85af00c4b81?w=500'
             },
             {
                 'category': 'Wedding Cakes',
                 'name': 'Elegant 3-Tier White',
-                'price': 250.00,
-                'description': 'A stunning three-tier cake decorated with edible lace and flowers.'
+                'price': 25000.00,
+                'description': 'A stunning three-tier cake decorated with edible lace and flowers.',
+                'image_url': 'https://images.unsplash.com/photo-1522673607200-16488321499b?w=500'
             }
         ]
+
+        # Note: In a real app with FileField, we'd need to download the image.
+        # For this quick fix, we'll keep the image field empty but I'll update
+        # the template to show these Unsplash images as defaults.
 
         for cake_data in cakes:
             cake, created = Cake.objects.get_or_create(

@@ -19,9 +19,10 @@
             </div>
         </div>
     {% empty %}
-        <div class="col-12 text-center">
-            <p>No images in the gallery yet.</p>
-        </div>
+        {# Fallback for Empty Gallery #}
+        <div class="col"><img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500" alt="Chocolate Cake" class="card-img-top rounded shadow-sm"></div>
+        <div class="col"><img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=500" alt="Vanilla Cake" class="card-img-top rounded shadow-sm"></div>
+        <div class="col"><img src="https://images.unsplash.com/photo-1535141192574-5d4897c12636?w=500" alt="Birthday Cake" class="card-img-top rounded shadow-sm"></div>
     {% endfor %}
 </div>
 {% endblock %}
