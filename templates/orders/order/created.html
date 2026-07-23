@@ -37,22 +37,36 @@
 <script>
     const orderId = "{{ order.id }}";
     const checkUrl = "{% url 'orders:check_payment_status' order.id %}";
+    let attempts = 0;
+    const maxAttempts = 60; // 3 minutes total
 
     function checkStatus() {
+        attempts++;
+        console.log(`Checking payment status for Order ${orderId}... Attempt ${attempts}`);
+
         fetch(checkUrl)
             .then(response => response.json())
             .then(data => {
+                console.log('Status Response:', data);
                 if (data.paid) {
+                    console.log('Payment Confirmed!');
                     document.getElementById('payment-pending').style.display = 'none';
                     document.getElementById('payment-success').style.display = 'block';
-                } else {
+                } else if (attempts < maxAttempts) {
                     // Poll again in 3 seconds
                     setTimeout(checkStatus, 3000);
+                } else {
+                    console.log('Max polling attempts reached.');
+                    // Show a message or a manual refresh button if needed
+                    const statusText = document.querySelector('#payment-pending p');
+                    if (statusText) {
+                        statusText.innerHTML = "Still waiting for payment confirmation? <a href='.' class='text-warning fw-bold'>Refresh page</a> or check <a href='{% url 'orders:order_track' %}?order_id={{ order.id }}&email={{ order.email }}' class='text-warning fw-bold'>Order Status</a>";
+                    }
                 }
             })
             .catch(error => {
                 console.error('Error checking payment status:', error);
-                setTimeout(checkStatus, 5000); // Try again later on error
+                setTimeout(checkStatus, 5000);
             });
     }
 

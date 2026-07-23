@@ -23,6 +23,10 @@ class MpesaClient:
 
     def stk_push(self, phone_number, amount, order_id):
         token = self.get_token()
+        if not token:
+            print("DEBUG: Failed to get M-Pesa OAuth Token")
+            return {"ResponseCode": "1", "CustomerMessage": "Failed to authenticate with Safaricom"}
+
         headers = {"Authorization": f"Bearer {token}"}
         timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
         password = base64.b64encode(f"{self.shortcode}{self.passkey}{timestamp}".encode()).decode()
@@ -38,11 +42,19 @@ class MpesaClient:
             "PhoneNumber": phone_number,
             "CallBackURL": self.callback_url,
             "AccountReference": f"Order{order_id}",
-            "TransactionDesc": "Payment for Melanin Cake House Order"
+            "TransactionDesc": f"Payment for Order {order_id}"
         }
 
-        url = f"{self.base_url}/mpesa/stkpush/v1/query" # Note: Correcting URL to process in actual usage
-        url = f"{self.base_url}/mpesa/stkpush/v1/processrequest"
+        url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+        # In production, use: https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest
+        if os.getenv('DEBUG') == 'False':
+            url = "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
 
-        response = requests.post(url, json=payload, headers=headers)
-        return response.json()
+        print(f"DEBUG: Sending STK Push request to {url} with callback {self.callback_url}")
+        try:
+            response = requests.post(url, json=payload, headers=headers, timeout=10)
+            print(f"DEBUG: Safaricom STK Push Status: {response.status_code}")
+            return response.json()
+        except Exception as e:
+            print(f"DEBUG: STK Push Request Exception: {e}")
+            return {"ResponseCode": "1", "CustomerMessage": str(e)}
