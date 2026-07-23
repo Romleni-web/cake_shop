@@ -140,6 +140,16 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+
+    # Fix for 403 Forbidden on Vercel POST requests
+    CSRF_TRUSTED_ORIGINS = [
+        'https://melanincakehouse.vercel.app',
+        'https://cake-shop-nine-theta.vercel.app',
+    ]
+    # Dynamically add vercel branch URLs if needed
+    vercel_url = os.getenv('VERCEL_URL')
+    if vercel_url:
+        CSRF_TRUSTED_ORIGINS.append(f'https://{vercel_url}')
 # Email settings
 if os.getenv('EMAIL_HOST_USER'):
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
