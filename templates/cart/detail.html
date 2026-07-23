@@ -23,7 +23,11 @@
                     <tr>
                         <td>
                             <a href="{{ product.get_absolute_url }}">
-                                <img src="{% if product.image %}{{ product.image.url }}{% else %}https://placehold.co/100x100?text=No+Image{% endif %}" alt="{{ product.name }}" style="width: 80px; height: 80px; object-fit: cover;" class="rounded">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 80px; height: 80px; object-fit: cover;" class="rounded shadow-sm">
+                                {% else %}
+                                    <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200" alt="{{ product.name }}" style="width: 80px; height: 80px; object-fit: cover;" class="rounded shadow-sm">
+                                {% endif %}
                             </a>
                         </td>
                         <td>{{ product.name }}</td>
