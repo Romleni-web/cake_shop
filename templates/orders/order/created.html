@@ -1,18 +1,62 @@
 {% extends "base.html" %}
 
-{% block title %}Thank you{% endblock %}
+{% block title %}Order #{{ order.id }} - Melanin Cake House{% endblock %}
 
 {% block content %}
-<div class="text-center py-5">
-    <i class="bi bi-check-circle text-success display-1 mb-4"></i>
-    <h1 class="display-3">Thank You!</h1>
-    <p class="lead">Your order <strong>#{{ order.id }}</strong> has been placed successfully.</p>
-    <div class="alert alert-info d-inline-block mt-3">
-        <i class="bi bi-phone"></i> Please check your phone for the M-Pesa STK Push to complete payment.
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card p-4 p-md-5 text-center shadow-sm border-0 rounded-4">
+            <div id="payment-pending">
+                <div class="spinner-border text-warning mb-4" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h1 class="h3 fw-bold mb-3 text-uppercase tracking-widest">Waiting for Payment</h1>
+                <p class="text-muted mb-4">Please complete the M-Pesa STK Push on your phone to finalize order <strong>#{{ order.id }}</strong>.</p>
+                <div class="alert bg-dark text-white border-0 py-3 mb-4 rounded-3 small">
+                    <i class="bi bi-phone me-2 text-warning"></i> Keep your phone nearby and enter your PIN when prompted.
+                </div>
+            </div>
+
+            <div id="payment-success" style="display: none;">
+                <div class="mb-4">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                </div>
+                <h1 class="h3 fw-bold mb-3 text-uppercase tracking-widest text-success">Order Confirmed!</h1>
+                <p class="text-muted mb-4">Thank you! Your payment for order <strong>#{{ order.id }}</strong> was successful. We've started preparing your delicious cakes.</p>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'cakes:product_list' %}" class="btn btn-primary rounded-pill">Back to Shop</a>
+                    <a href="{% url 'orders:order_track' %}?order_id={{ order.id }}&email={{ order.email }}" class="btn btn-outline-secondary btn-sm border-0">View Order Details</a>
+                </div>
+            </div>
+
+            <p class="text-muted small mt-4">Order ID: {{ order.id }}</p>
+        </div>
     </div>
-    <br>
-    <a href="{% url 'cakes:product_list' %}" class="btn btn-primary mt-4">
-        <i class="bi bi-arrow-left"></i> Back to Shop
-    </a>
 </div>
+
+<script>
+    const orderId = "{{ order.id }}";
+    const checkUrl = "{% url 'orders:check_payment_status' order.id %}";
+
+    function checkStatus() {
+        fetch(checkUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.paid) {
+                    document.getElementById('payment-pending').style.display = 'none';
+                    document.getElementById('payment-success').style.display = 'block';
+                } else {
+                    // Poll again in 3 seconds
+                    setTimeout(checkStatus, 3000);
+                }
+            })
+            .catch(error => {
+                console.error('Error checking payment status:', error);
+                setTimeout(checkStatus, 5000); // Try again later on error
+            });
+    }
+
+    // Start polling
+    checkStatus();
+</script>
 {% endblock %}

@@ -82,3 +82,7 @@ def order_track(request):
         except Order.DoesNotExist:
             order = None
     return render(request, 'orders/order/track.html', {'order': order})
+
+def check_payment_status(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    return JsonResponse({'paid': order.paid})
