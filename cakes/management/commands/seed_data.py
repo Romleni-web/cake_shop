@@ -1,12 +1,19 @@
 from django.core.management.base import BaseCommand
 from cakes.models import Category, Cake
 from django.utils.text import slugify
+from django.contrib.auth.models import User
+import os
 
 class Command(BaseCommand):
     help = 'Seeds the database with initial cake categories and products'
 
     def handle(self, *args, **kwargs):
         self.stdout.write('Seeding data...')
+
+        # Create Default Admin if it doesn't exist
+        if not User.objects.filter(username='admin').exists():
+            User.objects.create_superuser('admin', 'admin@melanincakehouse.com', 'MelaninAdmin2024')
+            self.stdout.write(self.style.SUCCESS('Created default superuser: admin'))
 
         categories = [
             'Birthday Cakes',
