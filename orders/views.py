@@ -36,14 +36,20 @@ def order_create(request):
                 phone = form.cleaned_data.get('phone_number')
                 amount = cart.get_total_price()
                 if phone:
+                    print(f"DEBUG: Triggering STK Push for Order {order.id} to {phone}")
                     response = mpesa.stk_push(phone, amount, order.id)
+                    print(f"DEBUG: M-Pesa Response: {response}")
+
                     # Save the CheckoutRequestID to link it with callback later
                     checkout_id = response.get('CheckoutRequestID')
                     if checkout_id:
                         order.mpesa_checkout_id = checkout_id
                         order.save()
+                        print(f"DEBUG: Saved CheckoutRequestID {checkout_id} for Order {order.id}")
+                    else:
+                        print(f"DEBUG: STK Push failed or no CheckoutRequestID returned. Response: {response}")
             except Exception as e:
-                print(f"M-Pesa STK Push error: {e}")
+                print(f"DEBUG: M-Pesa STK Push Exception: {e}")
 
             cart.clear()
             return render(request, 'orders/order/created.html', {'order': order})
@@ -56,6 +62,8 @@ def mpesa_callback(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
+            print(f"DEBUG: Callback Received: {data}")
+
             result_code = data['Body']['stkCallback']['ResultCode']
             checkout_id = data['Body']['stkCallback']['CheckoutRequestID']
 
@@ -66,6 +74,12 @@ def mpesa_callback(request):
                     order.paid = True
                     order.status = 'processing'
                     order.save()
+                    print(f"DEBUG: Order {order.id} marked as PAID via callback.")
+                else:
+                    print(f"DEBUG: Callback received for unknown CheckoutID: {checkout_id}")
+            else:
+                print(f"DEBUG: Payment Failed/Cancelled. ResultCode: {result_code}")
+
             return JsonResponse({"ResultCode": 0, "ResultDesc": "Success"})
         except Exception as e:
             print(f"Callback error: {e}")
