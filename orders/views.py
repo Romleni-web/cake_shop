@@ -21,17 +21,24 @@ def order_create(request):
                                         quantity=item['quantity'])
 
             # Automated Email Notification to Customer
-            subject = f'Order confirmation - Melanin Cake House #{order.id}'
-            message = f'Hi {order.first_name},\n\nYour order has been received! ' \
-                      f'Order ID: {order.id}\nTotal: ${cart.get_total_price()}\n\n' \
-                      f'We will notify you once the status changes.'
-            send_mail(subject, message, 'sales@melanincakehouse.com', [order.email])
+            try:
+                subject = f'Order confirmation - Melanin Cake House #{order.id}'
+                message = f'Hi {order.first_name},\n\nYour order has been received! ' \
+                          f'Order ID: {order.id}\nTotal: KSh {cart.get_total_price()}\n\n' \
+                          f'We will notify you once the status changes.'
+                send_mail(subject, message, 'sales@melanincakehouse.com', [order.email], fail_silently=True)
+            except Exception as e:
+                print(f"Email error: {e}")
 
             # Trigger M-Pesa STK Push
-            mpesa = MpesaClient()
-            phone = form.cleaned_data['phone_number']
-            amount = cart.get_total_price()
-            mpesa.stk_push(phone, amount, order.id)
+            try:
+                mpesa = MpesaClient()
+                phone = form.cleaned_data.get('phone_number')
+                amount = cart.get_total_price()
+                if phone:
+                    mpesa.stk_push(phone, amount, order.id)
+            except Exception as e:
+                print(f"M-Pesa STK Push error: {e}")
 
             cart.clear()
             return render(request, 'orders/order/created.html', {'order': order})
