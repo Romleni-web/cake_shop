@@ -36,7 +36,12 @@ def order_create(request):
                 phone = form.cleaned_data.get('phone_number')
                 amount = cart.get_total_price()
                 if phone:
-                    mpesa.stk_push(phone, amount, order.id)
+                    response = mpesa.stk_push(phone, amount, order.id)
+                    # Save the CheckoutRequestID to link it with callback later
+                    checkout_id = response.get('CheckoutRequestID')
+                    if checkout_id:
+                        order.mpesa_checkout_id = checkout_id
+                        order.save()
             except Exception as e:
                 print(f"M-Pesa STK Push error: {e}")
 
@@ -49,9 +54,23 @@ def order_create(request):
 @csrf_exempt
 def mpesa_callback(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        # Process callback logic here (update Order status to paid=True)
-        return JsonResponse({"ResultCode": 0, "ResultDesc": "Success"})
+        try:
+            data = json.loads(request.body)
+            result_code = data['Body']['stkCallback']['ResultCode']
+            checkout_id = data['Body']['stkCallback']['CheckoutRequestID']
+
+            if result_code == 0:
+                # Payment successful
+                order = Order.objects.filter(mpesa_checkout_id=checkout_id).first()
+                if order:
+                    order.paid = True
+                    order.status = 'processing'
+                    order.save()
+            return JsonResponse({"ResultCode": 0, "ResultDesc": "Success"})
+        except Exception as e:
+            print(f"Callback error: {e}")
+            return JsonResponse({"ResultCode": 1, "ResultDesc": "Error"})
+    return JsonResponse({"ResultCode": 1, "ResultDesc": "Invalid method"})
 
 def order_track(request):
     order = None
