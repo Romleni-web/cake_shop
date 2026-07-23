@@ -13,6 +13,7 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -140,6 +141,76 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # Default for development
+
+# Jazzmin Admin Settings
+JAZZMIN_SETTINGS = {
+    "site_title": "Melanin Cake House Admin",
+    "site_header": "Melanin Cake House",
+    "site_brand": "Melanin Cake House",
+    "site_logo": None,
+    "welcome_sign": "Welcome to Melanin Cake House Management",
+    "copyright": "Melanin Cake House Ltd",
+    "search_model": ["cakes.Cake", "orders.Order"],
+    "user_avatar": None,
+    "topmenu_links": [
+        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "View Site", "url": "/", "new_window": True},
+    ],
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": [],
+    "hide_models": [],
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "cakes.Cake": "fas fa-birthday-cake",
+        "cakes.Category": "fas fa-list",
+        "cakes.GalleryImage": "fas fa-image",
+        "cakes.Review": "fas fa-star",
+        "orders.Order": "fas fa-shopping-cart",
+        "orders.OrderItem": "fas fa-box",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    "related_modal_active": False,
+    "custom_css": None,
+    "custom_js": None,
+    "show_ui_builder": False,
+    "changeform_format": "horizontal_tabs",
+}
+
+JAZZMIN_UI_CONFIG = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-dark",
+    "accent": "accent-primary",
+    "navbar": "navbar-dark bg-dark",
+    "no_navbar_border": False,
+    "navbar_fixed": False,
+    "layout_fixed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": False,
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "darkly",
+    "dark_mode_theme": "darkly",
+    "button_classes": {
+        "primary": "btn-outline-primary",
+        "secondary": "btn-outline-secondary",
+        "info": "btn-outline-info",
+        "warning": "btn-outline-warning",
+        "danger": "btn-outline-danger",
+        "success": "btn-outline-success"
+    }
+}
 # For production, use SMTP:
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_HOST = 'smtp.gmail.com'
