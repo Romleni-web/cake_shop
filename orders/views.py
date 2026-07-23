@@ -62,27 +62,30 @@ def mpesa_callback(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            print(f"DEBUG: Callback Received: {data}")
+            # Log the entire body so we can see what Safaricom sent
+            print(f"CRITICAL DEBUG: Callback Body: {json.dumps(data)}")
 
-            result_code = data['Body']['stkCallback']['ResultCode']
-            checkout_id = data['Body']['stkCallback']['CheckoutRequestID']
+            stk_callback = data.get('Body', {}).get('stkCallback', {})
+            result_code = stk_callback.get('ResultCode')
+            checkout_id = stk_callback.get('CheckoutRequestID')
 
-            if result_code == 0:
-                # Payment successful
+            print(f"DEBUG: Processing CheckoutID: {checkout_id} with ResultCode: {result_code}")
+
+            if str(result_code) == '0':
                 order = Order.objects.filter(mpesa_checkout_id=checkout_id).first()
                 if order:
                     order.paid = True
                     order.status = 'processing'
                     order.save()
-                    print(f"DEBUG: Order {order.id} marked as PAID via callback.")
+                    print(f"SUCCESS: Order {order.id} verified and marked as PAID.")
                 else:
-                    print(f"DEBUG: Callback received for unknown CheckoutID: {checkout_id}")
+                    print(f"ERROR: No order found for CheckoutID {checkout_id}")
             else:
-                print(f"DEBUG: Payment Failed/Cancelled. ResultCode: {result_code}")
+                print(f"INFO: Payment not successful. ResultCode: {result_code}")
 
             return JsonResponse({"ResultCode": 0, "ResultDesc": "Success"})
         except Exception as e:
-            print(f"Callback error: {e}")
+            print(f"CALLBACK EXCEPTION: {str(e)}")
             return JsonResponse({"ResultCode": 1, "ResultDesc": "Error"})
     return JsonResponse({"ResultCode": 1, "ResultDesc": "Invalid method"})
 
