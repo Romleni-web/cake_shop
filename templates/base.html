@@ -36,19 +36,21 @@
         }
         .navbar {
             background-color: var(--primary-black) !important;
-            padding: 1rem 0;
+            padding: 0.4rem 0;
             border-bottom: 2px solid var(--accent-gold);
         }
         .navbar-brand {
             font-weight: 800;
             color: var(--accent-gold) !important;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
+            font-size: 1.25rem;
         }
         .nav-link {
             color: rgba(255,255,255,0.8) !important;
             font-weight: 500;
             transition: 0.3s;
+            font-size: 0.9rem;
         }
         .nav-link:hover {
             color: var(--accent-gold) !important;
@@ -59,8 +61,9 @@
             color: var(--accent-gold);
             font-weight: bold;
             text-transform: uppercase;
-            padding: 0.6rem 1.5rem;
+            padding: 0.5rem 1.2rem;
             transition: 0.3s;
+            font-size: 0.85rem;
         }
         .btn-primary:hover {
             background-color: var(--accent-gold);
@@ -69,14 +72,14 @@
         }
         .card {
             border: none;
-            border-radius: 15px;
+            border-radius: 12px;
             transition: 0.4s;
             background: white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
         .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
         .text-danger { color: var(--accent-gold) !important; }
         .btn-outline-danger { color: var(--accent-gold); border-color: var(--accent-gold); }
@@ -84,16 +87,16 @@
 
         .whatsapp-float {
             position: fixed;
-            width: 60px;
-            height: 60px;
-            bottom: 40px;
-            right: 40px;
+            width: 50px;
+            height: 50px;
+            bottom: 30px;
+            right: 30px;
             background-color: #25d366;
             color: #FFF;
             border-radius: 50px;
             text-align: center;
-            font-size: 30px;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4);
             z-index: 1000;
             display: flex;
             align-items: center;
@@ -110,18 +113,17 @@
             background-color: var(--primary-black) !important;
             color: white;
             margin-top: auto;
+            padding: 2rem 0;
         }
         footer .text-muted { color: rgba(255,255,255,0.5) !important; }
 
-        /* Mobile Search Adjustment */
         @media (max-width: 991.98px) {
-            .navbar-search { width: 100% !important; margin: 15px 0; }
-            .whatsapp-float { width: 50px; height: 50px; bottom: 20px; right: 20px; font-size: 25px; }
+            .navbar-search { width: 100% !important; margin: 10px 0; }
+            .whatsapp-float { width: 45px; height: 45px; bottom: 20px; right: 20px; font-size: 22px; }
         }
     </style>
 </head>
 <body>
-    <!-- WhatsApp Floating Button -->
     <a href="https://wa.me/254700000000" class="whatsapp-float" target="_blank">
         <i class="bi bi-whatsapp"></i>
     </a>
@@ -129,51 +131,43 @@
     <nav class="navbar navbar-expand-lg navbar-dark mb-4 sticky-top">
         <div class="container">
             <a class="navbar-brand" href="{% url 'cakes:product_list' %}">
-                <i class="bi bi-cake2 me-2"></i>Melanin Cake House
+                <i class="bi bi-cake2 me-1"></i>Melanin
             </a>
 
             <div class="d-flex align-items-center d-lg-none ms-auto">
                 <a class="nav-link position-relative me-3" href="{% url 'cart:cart_detail' %}">
-                    <i class="bi bi-cart3 fs-4 text-white"></i>
+                    <i class="bi bi-cart3 fs-5 text-white"></i>
                     {% with total_items=cart|length %}
                         {% if total_items > 0 %}
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.5rem; padding: 0.25em 0.4em;">
                                 {{ total_items }}
                             </span>
                         {% endif %}
                     {% endwith %}
                 </a>
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
+                <button class="navbar-toggler border-0 p-1" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon" style="font-size: 0.8rem;"></span>
                 </button>
             </div>
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <form class="d-flex mx-auto w-50 navbar-search" action="{% url 'cakes:product_list' %}" method="get">
-                    <div class="input-group">
-                        <input class="form-control bg-dark text-white border-secondary" type="search" name="q" placeholder="Search for premium cakes..." aria-label="Search">
+                    <div class="input-group input-group-sm">
+                        <input class="form-control bg-dark text-white border-secondary" type="search" name="q" placeholder="Search cakes..." aria-label="Search">
                         <button class="btn btn-outline-warning" type="submit"><i class="bi bi-search"></i></button>
                     </div>
                 </form>
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'cakes:product_list' %}">Shop</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'cakes:gallery' %}">Gallery</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'orders:order_track' %}">Track</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'cakes:contact' %}">Contact</a>
-                    </li>
-                    <li class="nav-item d-none d-lg-block">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'cakes:product_list' %}">Shop</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'cakes:gallery' %}">Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'orders:order_track' %}">Track</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'cakes:contact' %}">Contact</a></li>
+                    <li class="nav-item d-none d-lg-block ms-2">
                         <a class="nav-link position-relative" href="{% url 'cart:cart_detail' %}">
-                            <i class="bi bi-cart3 me-1"></i>
+                            <i class="bi bi-cart3 fs-5"></i>
                             {% with total_items=cart|length %}
                                 {% if total_items > 0 %}
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.5rem; padding: 0.25em 0.4em;">
                                         {{ total_items }}
                                     </span>
                                 {% endif %}
@@ -185,22 +179,22 @@
         </div>
     </nav>
 
-    <div class="container pb-5">
+    <div class="container pb-4">
         {% block content %}
         {% endblock %}
     </div>
 
-    <footer class="py-5">
+    <footer>
         <div class="container text-center">
-            <div class="mb-4">
-                <a href="#" class="text-white mx-3 fs-3"><i class="bi bi-facebook"></i></a>
-                <a href="#" class="text-white mx-3 fs-3"><i class="bi bi-instagram"></i></a>
-                <a href="#" class="text-white mx-3 fs-3"><i class="bi bi-twitter-x"></i></a>
-                <a href="#" class="text-white mx-3 fs-3"><i class="bi bi-whatsapp"></i></a>
+            <div class="mb-3">
+                <a href="#" class="text-white mx-2 fs-4"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="text-white mx-2 fs-4"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="text-white mx-2 fs-4"><i class="bi bi-twitter-x"></i></a>
+                <a href="#" class="text-white mx-2 fs-4"><i class="bi bi-whatsapp"></i></a>
             </div>
-            <p class="mb-1">MELANIN CAKE HOUSE</p>
-            <p class="text-muted small">&copy; 2024 Melanin Cake House. All rights reserved.</p>
-            <p class="small mb-0"><a href="/admin" class="text-decoration-none text-muted opacity-50">Staff Login</a></p>
+            <p class="mb-0 small fw-bold tracking-widest text-uppercase">Melanin Cake House</p>
+            <p class="text-muted small mb-2">&copy; 2024. All rights reserved.</p>
+            <p class="small mb-0"><a href="/admin" class="text-decoration-none text-muted opacity-50">Staff</a></p>
         </div>
     </footer>
 
